@@ -6,7 +6,7 @@ class Track < ApplicationRecord
   def self.build_from_spotify(data) 
     Track.find_or_create_by(spotify_id: data['id']) do |track| 
       track.name = data['name'] 
-      track.spotify_url = data['href'] 
+      track.spotify_url = data['external_urls']['spotify']
       track.duration = data['duration_ms'] 
       track.disc_number = data['disc_number'] 
     end 

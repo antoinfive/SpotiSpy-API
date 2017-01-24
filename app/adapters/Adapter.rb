@@ -6,27 +6,41 @@ AUTH_STRING = Base64.strict_encode64("#{ENV['spotify_client_id']}:#{ENV['spotify
 class Adapter 
   class SpotifyApi 
     class Authorizer
-      AUTH_BASE_URL = 'https://accounts.spotify.com'
+      AUTH_BASE_URL = 'https://accounts.spotify.com' 
+
+      attr_reader :code 
+
+      def initialize(code)
+        @code = code        
+      end
 
       def request_authorization 
         url = "#{AUTH_BASE_URL}/api/token" 
         header_hash = {'Authorization' => "Basic #{AUTH_STRING}", "Content-Type" => 'application/x-www-form-urlencoded' }
-        payload = {'grant_type' => 'client_credentials' } 
+        payload = {'grant_type' => 'authorization_code', 'code' => code, 'redirect_uri' => 'http://localhost:3000/auth/callback' } 
 
         response = RestClient.post url, payload, header_hash 
         access_token = JSON.parse(response)['access_token']
 
         access_token
       end 
+
     end 
 
     class Client 
       API_BASE_URL = 'https://api.spotify.com/v1'
       attr_reader :access_token
 
-      def initialize
-        @authorizer = Adapter::SpotifyApi::Authorizer.new
+      def initialize(code)
+        @authorizer = Adapter::SpotifyApi::Authorizer.new(code)
         @access_token = @authorizer.request_authorization 
+      end
+      
+      def fetch_current_user 
+        # binding.pry
+        url = create_oauth_url
+        response = RestClient.get url, header_hash 
+        JSON.parse(response.body)
       end
 
       def fetch_item(type, id)
@@ -75,6 +89,10 @@ class Adapter
 
       def create_fetch_url(type, id)
         URI.escape("#{API_BASE_URL}/#{type}/#{id}")
+      end
+      
+      def create_oauth_url
+        "#{API_BASE_URL}/me"
       end
 
       def header_hash 
