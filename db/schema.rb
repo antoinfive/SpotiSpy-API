@@ -10,11 +10,46 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170118165421) do
+ActiveRecord::Schema.define(version: 20170123235807) do
 
   create_table "accounts", force: :cascade do |t|
     t.string "username"
     t.string "email"
+  end
+
+  create_table "albums", force: :cascade do |t|
+    t.string   "name"
+    t.string   "spotify_id"
+    t.string   "spotify_url"
+    t.string   "release_date"
+    t.string   "image_url"
+    t.integer  "artist_id"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["artist_id"], name: "index_albums_on_artist_id"
+  end
+
+  create_table "artists", force: :cascade do |t|
+    t.string   "name"
+    t.string   "spotify_id"
+    t.string   "spotify_url"
+    t.integer  "followers"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  create_table "tracks", force: :cascade do |t|
+    t.string   "name"
+    t.string   "spotify_url"
+    t.string   "spotify_id"
+    t.integer  "duration"
+    t.integer  "disc_number"
+    t.integer  "album_id"
+    t.integer  "artist_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.index ["album_id"], name: "index_tracks_on_album_id"
+    t.index ["artist_id"], name: "index_tracks_on_artist_id"
   end
 
 end
