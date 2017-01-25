@@ -1,8 +1,8 @@
 class Account < ApplicationRecord 
   
-  def self.find_or_create_from_spotify(data)
-    # binding.pry
-    Account.find_or_create_by(username: data['display_name']) do |user| 
+  def self.find_or_create_from_spotify(data) 
+    Account.find_or_create_by(email: data['email']) do |user| 
+      user.username = data['display_name']
     end  
   end
 end

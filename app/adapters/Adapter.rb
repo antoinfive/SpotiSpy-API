@@ -98,6 +98,7 @@ class Adapter
       def header_hash 
         {'Authorization' => "Bearer #{access_token}" }
       end
+
     end
 
   end
